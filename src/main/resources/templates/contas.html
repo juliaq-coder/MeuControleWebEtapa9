@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>MeuControle - Contas</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+</head>
+
+<body>
+
+
+<header class="topo">
+
+    <div class="container topo-conteudo">
+
+        <h1 class="logo">MeuControle</h1>
+
+        <nav class="menu">
+
+            <a th:href="@{/}">
+                Início
+            </a>
+
+            <a th:href="@{/contas}"
+               class="ativo">
+                Contas
+            </a>
+
+            <a th:href="@{/pessoas}">
+                Pessoas
+            </a>
+
+            <a th:href="@{/categorias}">
+                Categorias
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="cabecalho-pagina">
+
+        <h2>Gerenciar Contas</h2>
+
+        <p>
+            Cadastre, edite e organize suas contas.
+        </p>
+
+    </section>
+
+
+    <div th:if="${param.sucesso}"
+         class="mensagem sucesso">
+
+        Conta salva com sucesso!
+
+    </div>
+
+
+    <div th:if="${param.excluido}"
+         class="mensagem sucesso">
+
+        Conta excluída com sucesso!
+
+    </div>
+
+
+    <div th:if="${erro}"
+         class="mensagem erro"
+         th:text="${erro}">
+    </div>
+
+
+    <section class="painel">
+
+        <h3 th:text="${conta.id == null ? 'Cadastrar nova conta' : 'Editar conta'}">
+            Cadastrar nova conta
+        </h3>
+
+
+        <form th:action="@{/contas/salvar}"
+              th:object="${conta}"
+              method="post"
+              class="formulario"
+              id="formConta">
+
+            <input type="hidden"
+                   th:field="*{id}">
+
+
+            <div class="campo">
+
+                <label for="nome">
+                    Nome da conta
+                </label>
+
+                <input type="text"
+                       id="nome"
+                       th:field="*{nome}"
+                       maxlength="100"
+                       placeholder="Ex.: Conta de Luz"
+                       required>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="valor">
+                    Valor
+                </label>
+
+                <input type="number"
+                       id="valor"
+                       th:field="*{valor}"
+                       min="0.01"
+                       step="0.01"
+                       placeholder="0,00"
+                       required>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="vencimento">
+                    Data de vencimento
+                </label>
+
+                <input type="date"
+                       id="vencimento"
+                       th:field="*{vencimento}"
+                       required>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="status">
+                    Status
+                </label>
+
+                <select id="status"
+                        th:field="*{status}"
+                        required>
+
+                    <option value="">
+                        Selecione
+                    </option>
+
+                    <option value="Paga">
+                        Paga
+                    </option>
+
+                    <option value="Vencida">
+                        Vencida
+                    </option>
+
+                    <option value="A Vencer">
+                        A Vencer
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="pessoa">
+                    Pessoa
+                </label>
+
+                <select id="pessoa"
+                        th:field="*{pessoa}"
+                        required>
+
+                    <option value="">
+                        Selecione uma pessoa
+                    </option>
+
+                    <option th:each="p : ${pessoas}"
+                            th:value="${p.nome}"
+                            th:text="${p.nome}">
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="categoria">
+                    Categoria
+                </label>
+
+                <select id="categoria"
+                        th:field="*{categoria}"
+                        required>
+
+                    <option value="">
+                        Selecione uma categoria
+                    </option>
+
+                    <option th:each="c : ${categorias}"
+                            th:value="${c.nome}"
+                            th:text="${c.nome}">
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="campo campo-grande">
+
+                <label for="comprovante">
+                    Caminho do comprovante
+                </label>
+
+                <input type="text"
+                       id="comprovante"
+                       th:field="*{comprovante}"
+                       maxlength="255"
+                       placeholder="Ex.: comprovantes/luz.pdf">
+
+                <small>
+                    Campo opcional.
+                </small>
+
+            </div>
+
+
+            <div class="acoes-form">
+
+                <button type="submit"
+                        class="botao botao-primario"
+                        th:text="${conta.id == null ? 'Cadastrar conta' : 'Salvar alterações'}">
+
+                    Cadastrar conta
+
+                </button>
+
+
+                <a th:if="${conta.id != null}"
+                   th:href="@{/contas}"
+                   class="botao botao-secundario">
+
+                    Cancelar edição
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <section class="secao">
+
+        <div class="titulo-secao">
+
+            <div>
+
+                <h2>Contas cadastradas</h2>
+
+                <p>
+                    Todas as contas salvas no banco de dados.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabela-container">
+
+            <table>
+
+                <thead>
+
+                <tr>
+                    <th>Nome</th>
+                    <th>Valor</th>
+                    <th>Vencimento</th>
+                    <th>Status</th>
+                    <th>Pessoa</th>
+                    <th>Categoria</th>
+                    <th>Comprovante</th>
+                    <th>Ações</th>
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                <tr th:if="${#lists.isEmpty(contas)}">
+
+                    <td colspan="8"
+                        class="sem-registros">
+
+                        Nenhuma conta cadastrada.
+
+                    </td>
+
+                </tr>
+
+
+                <tr th:each="item : ${contas}">
+
+                    <td th:text="${item.nome}">
+                        Conta
+                    </td>
+
+                    <td th:text="${#numbers.formatCurrency(item.valor)}">
+                        R$ 0,00
+                    </td>
+
+                    <td th:text="${#temporals.format(item.vencimento, 'dd/MM/yyyy')}">
+                        01/01/2026
+                    </td>
+
+
+                    <td>
+
+                        <span class="status"
+                              th:classappend="${item.status == 'Paga'} ? ' status-paga' :
+                                             (${item.status == 'Vencida'} ? ' status-vencida' : ' status-vencer')"
+                              th:text="${item.status}">
+                        </span>
+
+                    </td>
+
+
+                    <td th:text="${item.pessoa}">
+                        Pessoa
+                    </td>
+
+
+                    <td th:text="${item.categoria}">
+                        Categoria
+                    </td>
+
+
+                    <td>
+
+                        <span th:if="${item.comprovante != null and !item.comprovante.isBlank()}"
+                              th:text="${item.comprovante}">
+                        </span>
+
+                        <span th:if="${item.comprovante == null or item.comprovante.isBlank()}">
+                            —
+                        </span>
+
+                    </td>
+
+
+                    <td class="acoes-tabela">
+
+                        <a th:href="@{/contas/editar/{id}(id=${item.id})}"
+                           class="botao botao-editar">
+
+                            Editar
+
+                        </a>
+
+
+                        <form th:action="@{/contas/excluir/{id}(id=${item.id})}"
+                              method="post"
+                              class="form-excluir"
+                              onsubmit="return confirmarExclusao('conta');">
+
+                            <button type="submit"
+                                    class="botao botao-excluir">
+
+                                Excluir
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="rodape">
+
+    <p>MeuControle - Projeto Integrador</p>
+
+</footer>
+
+
+<script th:src="@{/js/script.js}"></script>
+
+</body>
+</html>

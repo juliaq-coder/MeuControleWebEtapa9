@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MeuControle - Início</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<header class="topo">
+
+    <div class="container topo-conteudo">
+
+        <h1 class="logo">MeuControle</h1>
+
+        <nav class="menu">
+            <a th:href="@{/}" class="ativo">Início</a>
+            <a th:href="@{/contas}">Contas</a>
+            <a th:href="@{/pessoas}">Pessoas</a>
+            <a th:href="@{/categorias}">Categorias</a>
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="boas-vindas">
+
+        <h2>Bem-vinda ao MeuControle!</h2>
+
+        <p>
+            Organize suas contas, pessoas e categorias de forma simples.
+        </p>
+
+    </section>
+
+
+    <section class="cards">
+
+        <a th:href="@{/contas}" class="card">
+
+            <div class="icone-card">💰</div>
+
+            <h3>Contas</h3>
+
+            <span class="numero"
+                  th:text="${quantidadeContas}">
+                0
+            </span>
+
+            <p>contas cadastradas</p>
+
+        </a>
+
+
+        <a th:href="@{/pessoas}" class="card">
+
+            <div class="icone-card">👤</div>
+
+            <h3>Pessoas</h3>
+
+            <span class="numero"
+                  th:text="${quantidadePessoas}">
+                0
+            </span>
+
+            <p>pessoas cadastradas</p>
+
+        </a>
+
+
+        <a th:href="@{/categorias}" class="card">
+
+            <div class="icone-card">📁</div>
+
+            <h3>Categorias</h3>
+
+            <span class="numero"
+                  th:text="${quantidadeCategorias}">
+                0
+            </span>
+
+            <p>categorias cadastradas</p>
+
+        </a>
+
+    </section>
+
+
+    <section class="secao">
+
+        <div class="titulo-secao">
+
+            <div>
+                <h2>Contas cadastradas</h2>
+                <p>Veja as contas registradas no sistema.</p>
+            </div>
+
+            <a th:href="@{/contas}"
+               class="botao botao-primario">
+
+                Gerenciar contas
+
+            </a>
+
+        </div>
+
+
+        <div class="tabela-container">
+
+            <table>
+
+                <thead>
+
+                <tr>
+                    <th>Conta</th>
+                    <th>Valor</th>
+                    <th>Vencimento</th>
+                    <th>Status</th>
+                    <th>Pessoa</th>
+                    <th>Categoria</th>
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                <tr th:if="${#lists.isEmpty(contas)}">
+
+                    <td colspan="6"
+                        class="sem-registros">
+
+                        Nenhuma conta cadastrada.
+
+                    </td>
+
+                </tr>
+
+
+                <tr th:each="conta : ${contas}">
+
+                    <td th:text="${conta.nome}">
+                        Conta
+                    </td>
+
+                    <td th:text="${#numbers.formatCurrency(conta.valor)}">
+                        R$ 0,00
+                    </td>
+
+                    <td th:text="${#temporals.format(conta.vencimento, 'dd/MM/yyyy')}">
+                        01/01/2026
+                    </td>
+
+                    <td>
+
+                        <span class="status"
+                              th:classappend="${conta.status == 'Paga'} ? ' status-paga' :
+                                             (${conta.status == 'Vencida'} ? ' status-vencida' : ' status-vencer')"
+                              th:text="${conta.status}">
+                        </span>
+
+                    </td>
+
+                    <td th:text="${conta.pessoa}">
+                        Pessoa
+                    </td>
+
+                    <td th:text="${conta.categoria}">
+                        Categoria
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="rodape">
+
+    <p>MeuControle - Projeto Integrador</p>
+
+</footer>
+
+
+<script th:src="@{/js/script.js}"></script>
+
+</body>
+</html>

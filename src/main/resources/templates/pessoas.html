@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>MeuControle - Pessoas</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+</head>
+
+<body>
+
+
+<header class="topo">
+
+    <div class="container topo-conteudo">
+
+        <h1 class="logo">MeuControle</h1>
+
+        <nav class="menu">
+
+            <a th:href="@{/}">
+                Início
+            </a>
+
+            <a th:href="@{/contas}">
+                Contas
+            </a>
+
+            <a th:href="@{/pessoas}"
+               class="ativo">
+                Pessoas
+            </a>
+
+            <a th:href="@{/categorias}">
+                Categorias
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="cabecalho-pagina">
+
+        <h2>Gerenciar Pessoas</h2>
+
+        <p>
+            Cadastre e visualize as pessoas responsáveis pelas contas.
+        </p>
+
+    </section>
+
+
+    <div th:if="${param.sucesso}"
+         class="mensagem sucesso">
+
+        Pessoa cadastrada com sucesso!
+
+    </div>
+
+
+    <div th:if="${param.excluido}"
+         class="mensagem sucesso">
+
+        Pessoa excluída com sucesso!
+
+    </div>
+
+
+    <div th:if="${erro}"
+         class="mensagem erro"
+         th:text="${erro}">
+    </div>
+
+
+    <section class="painel">
+
+        <h3>Cadastrar pessoa</h3>
+
+
+        <form th:action="@{/pessoas/salvar}"
+              th:object="${pessoa}"
+              method="post"
+              class="formulario"
+              id="formPessoa">
+
+            <div class="campo campo-grande">
+
+                <label for="nome">
+                    Nome
+                </label>
+
+                <input type="text"
+                       id="nome"
+                       th:field="*{nome}"
+                       maxlength="100"
+                       placeholder="Digite o nome"
+                       required>
+
+            </div>
+
+
+            <div class="acoes-form">
+
+                <button type="submit"
+                        class="botao botao-primario">
+
+                    Cadastrar pessoa
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <section class="secao">
+
+        <div class="titulo-secao">
+
+            <div>
+
+                <h2>Pessoas cadastradas</h2>
+
+                <p>
+                    Pessoas disponíveis para atribuição às contas.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="tabela-container">
+
+            <table>
+
+                <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                <tr th:if="${#lists.isEmpty(pessoas)}">
+
+                    <td colspan="3"
+                        class="sem-registros">
+
+                        Nenhuma pessoa cadastrada.
+
+                    </td>
+
+                </tr>
+
+
+                <tr th:each="item : ${pessoas}">
+
+                    <td th:text="${item.id}">
+                        1
+                    </td>
+
+                    <td th:text="${item.nome}">
+                        Nome
+                    </td>
+
+                    <td>
+
+                        <form th:action="@{/pessoas/excluir/{id}(id=${item.id})}"
+                              method="post"
+                              class="form-excluir"
+                              onsubmit="return confirmarExclusao('pessoa');">
+
+                            <button type="submit"
+                                    class="botao botao-excluir">
+
+                                Excluir
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="rodape">
+
+    <p>MeuControle - Projeto Integrador</p>
+
+</footer>
+
+
+<script th:src="@{/js/script.js}"></script>
+
+</body>
+</html>
